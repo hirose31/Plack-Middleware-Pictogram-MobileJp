@@ -15,6 +15,8 @@ requires 'HTML::Pictogram::MobileJp';
 
 test_requires 'Test::More';
 test_requires 'Test::TCP';
+test_requires 'Plack::Test';
+test_requires 'Test::MobileAgent';
 
 tests_recursive;
 author_tests 'xt';
