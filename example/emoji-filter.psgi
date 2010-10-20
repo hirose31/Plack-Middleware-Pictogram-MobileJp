@@ -13,12 +13,13 @@
 # Static でそのまま返すものも指定できる。
 #
 
+use Path::Class qw(dir file);
 use Text::Xslate;
 use Encode;
 use Plack::App::Directory;
 
-my $TMPL_DIR   = '/web/example.jp/tmpl';
-my $STATIC_DIR = '/web/example.jp/htdocs';
+my $TMPL_DIR   = dir($ENV{TMPL_DIR}   || '/web/example.jp/tmpl')->resolve;
+my $STATIC_DIR = dir($ENV{STATIC_DIR} || '/web/example.jp/htdocs')->resolve;
 
 my $xslate = Text::Xslate->new(
     path        => [$TMPL_DIR],
@@ -39,7 +40,13 @@ my $app = sub {
         username => 'hirose31',
        );
 
-    if (-d "$TMPL_DIR/$path") {
+    my $requested = $TMPL_DIR->file($path)->resolve;
+    if (! $TMPL_DIR->subsumes( $requested )) {
+        # to prevent directory traversal
+        return [403, ['Content-Type'=>'text/plain'], ["Forbidden\n"]];
+    } elsif (! -e $requested) {
+        return [404, ['Content-Type'=>'text/plain'], ["Not Found\n"]];
+    } elsif ($requested->is_dir) {
         return Plack::App::Directory->new({
             root     => $TMPL_DIR,
             encoding => "shift_jis",
