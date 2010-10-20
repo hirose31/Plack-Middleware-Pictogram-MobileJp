@@ -88,6 +88,13 @@ L<http://github.com/hirose31/plack-middleware-pictogram-mobilejp>
 
 patches and collaborators are welcome.
 
+=head1 TODO
+
+リクエストの度に HTTP::MobileAgent のインスタンスを生成しているが、これ
+は、Object::Container のような働きをする Middleware を作るとか、%env に
+格納するとかしてインスタンスを使い回した方が効率がよいと思われる。ただ、
+実効でどの程度効果があるかは調べてはいない。
+
 =head1 SEE ALSO
 
 L<HTML::Pictogram::MobileJp>
